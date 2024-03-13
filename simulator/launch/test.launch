@@ -1,6 +1,0 @@
-<launch>
-    <node pkg="center2odom" name="center2odom_node" type="center2odom"/>
-    <!-- <node pkg="center2odom" name="visualization" type="visualization_node"/> -->
-    <node pkg="traj_generation" name="traj_generate_node" type="traj_generationd"/>
-    
-</launch>

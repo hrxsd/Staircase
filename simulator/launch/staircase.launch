@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-
-<launch>
-  <include file="$(find simulator)/launch/start.launch">
-    <arg name="world" value="$(find simulator)/worlds/staircase.world"/>
-  </include>
-</launch>

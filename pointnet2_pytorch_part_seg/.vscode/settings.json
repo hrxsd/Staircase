@@ -1,7 +1,0 @@
-{
-    "python.pythonPath": "C:\\Users\\wsdsg\\.conda\\envs\\cudnn821cuda113\\python.exe",
-    "[python]": {
-        "editor.defaultFormatter": "ms-python.autopep8"
-    },
-    "python.formatting.provider": "none"
-}
