@@ -1,0 +1,29 @@
+import open3d as o3d
+import numpy as np
+
+# 给定的法向量
+normal_vector = [0.7180359238840269, 0.24549264846908087, -0.6512739604495547]
+
+# 创建一个几何图元表示箭头
+arrow = o3d.geometry.TriangleMesh.create_arrow(cylinder_radius=0.05, cone_radius=0.15,
+                                               cylinder_height=0.5, cone_height=1.0)
+
+# 计算箭头的旋转矩阵，使箭头方向与法向量一致
+rotation_matrix = o3d.geometry.get_rotation_matrix_from_xyz([0, 0, np.pi / 2])  # 根据需要进行调整
+
+# 对箭头进行旋转和平移
+arrow.rotate(rotation_matrix, center=(0, 0, 0))
+arrow.translate(normal_vector)
+
+# 创建可视化窗口
+vis = o3d.visualization.Visualizer()
+vis.create_window()
+
+# 将箭头添加到可视化窗口
+vis.add_geometry(arrow)
+
+# 运行可视化
+vis.run()
+
+# 关闭可视化窗口
+vis.destroy_window()

@@ -1,0 +1,26 @@
+<launch>
+    <include file="$(find simulator)/launch/staircase.launch"/>
+    <!-- <include file="$(find unitree_gazebo)/launch/normal.launch"/> -->
+    <include file="/home/mjw/legged_control_ws/src/legged_control/legged_examples/legged_unitree/legged_unitree_description/launch/empty_world1.launch"/>
+
+    <!-- <include file="$(find aloam_velodyne)/launch/aloam_velodyne_VLP_16.launch">
+	  <arg name="rviz" value="true"/>
+    </include> -->
+
+
+
+    <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find simulator)/rviz/staircase_laser.rviz" required="true"/> -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find simulator)/rviz/staircase.rviz" required="true"/>
+
+    <!-- <node pkg="tf" type="static_transform_publisher" name="pointcloud2odom" 
+	    args="0 0.6 -0.18 0 -1.57 1.57 camera_depth_optical_frame odom 50"/> -->
+
+    <node pkg="tf" type="static_transform_publisher" name="camera2point" 
+	    args="0 0 0 -1.57 0 -1.57 camera_link camera_depth_optical_frame 50"/>
+
+    <node pkg="center2odom" name="center2odom_node" type="center2odom"/>
+    <!-- <node pkg="center2odom" name="visualization" type="visualization_node"/> -->
+    <node pkg="traj_generation" name="traj_generate_node" type="traj_generationd"/>
+
+
+</launch>
