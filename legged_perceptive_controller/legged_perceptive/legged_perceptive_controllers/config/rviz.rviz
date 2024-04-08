@@ -16,8 +16,6 @@ Panels:
         - /PointCloud21
         - /PoseArray1
         - /Path1
-        - /Path2
-        - /Path2/Offset1
       Splitter Ratio: 0.7029411792755127
     Tree Height: 676
   - Class: rviz/Selection
@@ -270,6 +268,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         tracking_camera_pose_frame:
           Alpha: 1
           Show Axes: false
@@ -303,6 +302,7 @@ Visualization Manager:
       Namespaces:
         CoM Trajectory: true
         EE Trajectories: true
+        Future footholds: true
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -406,30 +406,6 @@ Visualization Manager:
       Shaft Diameter: 0.10000000149011612
       Shaft Length: 0.10000000149011612
       Topic: /trajectory
-      Unreliable: false
-      Value: true
-    - Alpha: 1
-      Buffer Length: 1
-      Class: rviz/Path
-      Color: 239; 41; 41
-      Enabled: true
-      Head Diameter: 0.30000001192092896
-      Head Length: 0.20000000298023224
-      Length: 0.30000001192092896
-      Line Style: Billboards
-      Line Width: 0.029999999329447746
-      Name: Path
-      Offset:
-        X: 0.30000001192092896
-        Y: 0
-        Z: -0.44999998807907104
-      Pose Color: 255; 85; 255
-      Pose Style: None
-      Queue Size: 10
-      Radius: 0.029999999329447746
-      Shaft Diameter: 0.10000000149011612
-      Shaft Length: 0.10000000149011612
-      Topic: /local_path
       Unreliable: false
       Value: true
   Enabled: true

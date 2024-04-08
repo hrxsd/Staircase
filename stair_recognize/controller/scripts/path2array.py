@@ -34,7 +34,7 @@ def trajectory_callback(msg):
     step = 3
     trajectory_data = []
     
-    for i in range(15, len(msg.poses), step):
+    for i in range(30, len(msg.poses), step):
         pose = msg.poses[i]
         trajectory_data.append(pose.pose.position.x)
         trajectory_data.append(pose.pose.position.y)

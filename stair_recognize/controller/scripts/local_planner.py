@@ -44,6 +44,16 @@ class Local_Planner():
         self.obstacle_markerarray = MarkerArray()
         self.ob_pub = rospy.Publisher('/ob_draw', MarkerArray, queue_size=10)
         
+        # # 记录上次/surf_predict_pub更新的时间
+        # self.last_update_time = rospy.Time.now()
+        # self.no_update_threshold = rospy.Duration(4) # 4s没有更新则认为没有新的路径
+        # self.is_path_stopped = False
+        
+        # # 存储上一次接收的/surf_predict_pub数据
+        # self.last_data = None
+        # self.data_unchanged_count = 0
+        # self.max_unchanged_count = 5
+        # self.is_constant_speed_active = False
 
     def distance_sqaure(self,c1,c2):
         distance = (c1[0]-c2[0])*(c1[0]-c2[0])+(c1[1]-c2[1])*(c1[1]-c2[1])
@@ -106,7 +116,7 @@ class Local_Planner():
             start_time = rospy.Time.now()
             states_sol, input_sol = MPC(np.expand_dims(self.curr_state, axis=0),self.goal_state,self.ob) ##  gobal planning
             end_time = rospy.Time.now()
-            rospy.loginfo('[Local Planner] NMPC solved in {} s'.format((end_time-start_time).to_sec()))
+            rospy.loginfo('[Local Planner] NMPC solved in {} s'.format((end_time-start_time).to_sec())) 
 
             if(self.is_end == 0):
                 self.__publish_local_plan(input_sol,states_sol)
@@ -117,7 +127,7 @@ class Local_Planner():
             print("no path")
         else:
             print("no path and no pose")
-        
+    
     # 发布局部路径和局部控制量
     def __publish_local_plan(self,input_sol,state_sol):
         local_path = Path()
@@ -130,7 +140,7 @@ class Local_Planner():
             this_pose_stamped = PoseStamped()
             this_pose_stamped.pose.position.x = state_sol[i,0]
             this_pose_stamped.pose.position.y = state_sol[i,1]
-            this_pose_stamped.pose.position.z = self.z+0.5 #self.desired_global_path[0][0,2]
+            this_pose_stamped.pose.position.z = self.z #self.desired_global_path[0][0,2]
             this_pose_stamped.header.seq = sequ
             sequ += 1
             this_pose_stamped.header.stamp = rospy.Time.now()
@@ -186,6 +196,37 @@ class Local_Planner():
                 self.desired_global_path[0][i,2]=data.data[3*(size-i)-1]
     
     def _global_path_callback2(self, data):
+        # # 更新上次更新时间
+        # self.last_update_time = rospy.Time.now()
+        # # 检查路径是否停止更新
+        # if not self.is_path_stopped:
+        #     current_time = rospy.Time.now()
+        #     time_since_last_update = current_time - self.last_update_time
+        #     if time_since_last_update > self.no_update_threshold:
+        #         rospy.logwarn('[Local Planner] Path has stopped updating for {} s'.format(time_since_last_update.to_sec()))
+        #         self.is_path_stopped = True
+        #         # 触发恒定速度运动
+        #         self.maintained_speed_motion()
+        # else:
+        #     rospy.loginfo('[Local Planner] Path received.')
+        #     self.is_path_stopped = False
+
+        # 检查数据是否变化
+        # if data == self.last_data:
+        #     # 数据没有变化，计数器加1
+        #     self.data_unchanged_count += 1
+        #     if self.data_unchanged_count >= self.max_unchanged_count:
+        #         rospy.loginfo('[Local Planner] Path has not changed for {} times'.format(self.data_unchanged_count))
+        #         if not self.is_constant_speed_active:
+        #             # 触发恒定速度运动
+        #             self.maintained_speed_motion()
+                    
+        # else:
+        #     # 数据变化，重置计数器
+        #     self.data_unchanged_count = 0
+        #     self.last_data = data
+        #     self._global_path_callback(data)
+        
         if(len(data.data)!=0):
             self.ref_path_set = True
             size = len(data.data)//5
@@ -195,7 +236,21 @@ class Local_Planner():
                 self.desired_global_path[0][i,1]=data.data[5*(size-i)-4]
                 self.desired_global_path[0][i,2]=data.data[5*(size-i)-2]
                 self.desired_global_path[0][i,3]=data.data[5*(size-i)-1]
-            
+    
+    # def maintained_speed_motion(self):
+    #     constant_linear_velocity = 0.2
+    #     constant_angular_velocity = 0.0
+        
+    #     self.control_cmd.linear.x = constant_linear_velocity
+    #     self.control_cmd.angular.z = constant_angular_velocity
+    #     self.__pub_rtc_cmd.publish(self.control_cmd)
+        
+    #     rospy.sleep(5)
+        
+    #     self.control_cmd.linear.x = 0.0
+    #     self.control_cmd.angular.z = 0.0
+    #     self.__pub_rtc_cmd.publish(self.control_cmd)
+        
     def cmd(self, data):
         
         self.control_cmd.linear.x = data[0]

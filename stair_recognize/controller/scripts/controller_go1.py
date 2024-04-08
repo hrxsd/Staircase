@@ -59,13 +59,15 @@ class Controller():
             c.data = [self.curr_state[0], self.curr_state[1], self.curr_state[2],
                       (self.curr_state[3]+np.pi) % (2*np.pi)-np.pi, roll, pitch]
             self.pub2.publish(c)
+            
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+            # rospy.loginfo("Error while getting current state.")
             pass
-
+    
     def cmd(self, data):
         self.control_cmd.linear.x = data[0]
         self.control_cmd.angular.z = data[1]
-        self.control_cmd.linear.z = 0.25
+        self.control_cmd.linear.z = 0.0
         print("control input: ", data)
         self.pub.publish(self.control_cmd)
 
@@ -89,16 +91,34 @@ class Controller():
             if(start_auto):
                 end_auto = self.auto()
                 if not end_auto:
-                    break
+                    break     
         self.cmd(np.array([0.0, 0.0]))
 
-    def auto(self):       
+    def auto(self):
+        slow_speed_count = 0       
         while not rospy.is_shutdown():
             key = self.getKey()
             if key == 'q':
                 return True
-            ref_inputs = self.local_plan[0]
-            self.cmd(ref_inputs)
+            ref_inputs = self.local_plan[5]
+            # self.cmd(ref_inputs)
+            
+            if abs(ref_inputs[0] < 0.1):
+            #     slow_speed_count += 1
+            # else:
+            #     slow_speed_count = 0
+                
+            # if slow_speed_count > 100:
+            #     end_time = rospy.get_time() + 5
+            #     while rospy.get_time() < end_time:
+            #         self.cmd(np.array([0.25, 0]))
+            #         self.rate.sleep()
+            #     slow_speed_count = 0
+            # else:
+                self.cmd(np.array([0.25, ref_inputs[1]]))
+            else:
+                self.cmd(ref_inputs)
+                
             self.rate.sleep()
 
     def manual(self):
